@@ -4,7 +4,7 @@ import glob
 from serial import Serial, SerialException
 
 
-def serial_ports():
+def get_com_ports():
     """ Lists serial port names
 
         :raises EnvironmentError:
