@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 from pyfirmata import Arduino
 from serial import SerialException
@@ -21,12 +22,16 @@ except SerialException as e:
   com_ports = get_com_ports()
   if len(com_ports) == 0:
     print('No COM ports in use detected. Is the Arduino connected?')
+    sys.exit(1)
   elif len(com_ports) == 1:
     question = 'Found COM port ' + com_ports[0] + ', retry using this port?'
     answer = query_yes_no(question)
     if answer:
       board = Arduino(com_ports[0])
+    else:
+      print('Exiting')
+      sys.exit(1)
   else:
     print('I do have COM ports', ', '.join(com_ports), 'you may want to try one of these.')
 
-print('Done!')
+print('Connected!')
