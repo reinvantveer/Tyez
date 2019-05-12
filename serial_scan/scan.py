@@ -34,4 +34,4 @@ def get_com_ports():
 
 
 if __name__ == '__main__':
-    print(serial_ports())
+    print(get_com_ports())
