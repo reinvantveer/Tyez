@@ -1,11 +1,10 @@
 import argparse
-import sys
+import time
 
-from pyfirmata import Arduino
-from serial import SerialException
+from util.board import get_board
+from pyfirmata import util
 
-from serial_scan.scan import get_com_ports
-from util.yes_no import query_yes_no
+ANALOG_PORT = 0
 
 parser = argparse.ArgumentParser(
     description='REST API and web interface to Arduino analog port read',
@@ -15,23 +14,21 @@ parser = argparse.ArgumentParser(
 parser.add_argument('-p', '--port', required=True, help='COM port to communicate with the Arduino')
 args = parser.parse_args()
 
-try:
-    board = Arduino(args.port)
-except SerialException as e:
-    print('Unable to connect Arduino on port {}'.format(args.port))
-    com_ports = get_com_ports()
-    if len(com_ports) == 0:
-        print('No COM ports in use detected. Is the Arduino connected?')
-        sys.exit(1)
-    elif len(com_ports) == 1:
-        question = 'Found COM port ' + com_ports[0] + ', retry using this port?'
-        answer = query_yes_no(question)
-        if answer:
-            board = Arduino(com_ports[0])
-        else:
-            print('Exiting')
-            sys.exit(1)
-    else:
-        print('I do have COM ports', ', '.join(com_ports), 'you may want to try one of these.')
 
-print('Connected!')
+if __name__ == '__main__':
+    board = get_board(args.port)
+    print('Connected!')
+
+    it = util.Iterator(board)
+    it.start()
+    board.analog[ANALOG_PORT].enable_reporting()
+
+    # Get rid of the first None value by giving the board time to initialize:
+    time.sleep(1)
+
+    while True:
+        analog_val = board.analog[ANALOG_PORT].read()
+        print(analog_val)
+        time.sleep(1)
+
+    # print('Done!')
