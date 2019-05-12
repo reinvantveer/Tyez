@@ -1,6 +1,6 @@
 import sys
 
-
+# Adapted from https://stackoverflow.com/questions/3041986/apt-command-line-interface-like-yes-no-input#3041990
 def query_yes_no(question, default="yes"):
     """Ask a yes/no question via input() and return their answer.
 
